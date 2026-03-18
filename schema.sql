@@ -4,8 +4,8 @@ CREATE TABLE accounts(
   asset VARCHAR(10) NOT NULL,
   balance DECIMAL(38,18) NOT NULL DEFAULT 0,
   locked_balance DECIMAL(38,18) NOT NULL DEFAULT 0,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL
 );
 
 CREATE TABLE transactions(
@@ -19,8 +19,8 @@ CREATE TABLE transactions(
   block_number BIGINT,
   idempotency_key VARCHAR(256) UNIQUE,
   policy_check_result JSONB,
-  created_at TIMESTAMP NOT NULL,
-  confirmed_at TIMESTAMP        -- NULL means in flight, NOT NULL means confirmed
+  created_at TIMESTAMPTZ NOT NULL,
+  confirmed_at TIMESTAMPTZ      -- NULL means in flight, NOT NULL means confirmed
 );
 
 CREATE TABLE outbox_events(
@@ -28,8 +28,8 @@ CREATE TABLE outbox_events(
   aggregate_id VARCHAR(256) NOT NULL,
   event_type VARCHAR(64) NOT NULL,
   payload JSONB NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  published_at TIMESTAMP        -- NULL means not yet delivered to Kafka
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  published_at TIMESTAMPTZ      -- NULL means not yet delivered to Kafka
 );
 
 CREATE INDEX idx_transactions_status
