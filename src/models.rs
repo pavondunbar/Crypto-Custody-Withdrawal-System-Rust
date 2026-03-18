@@ -51,21 +51,52 @@ pub struct Account {
     pub id: Uuid,
     pub user_id: Uuid,
     pub asset: String,
-    pub balance: Decimal,
-    pub locked_balance: Decimal,
     pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
 }
 
-impl Account {
-    #[allow(dead_code)] // available for typed query callers
+#[derive(Debug, Clone, FromRow)]
+#[allow(dead_code)] // maps to ledger_entries table
+pub struct LedgerEntry {
+    pub id: Uuid,
+    pub account_id: Uuid,
+    pub entry_type: String,
+    pub amount: Decimal,
+    pub locked_delta: Decimal,
+    pub transaction_id: Option<Uuid>,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, FromRow)]
+#[allow(dead_code)] // maps to account_balances view
+pub struct AccountBalance {
+    pub account_id: Uuid,
+    pub user_id: Uuid,
+    pub asset: String,
+    pub balance: Decimal,
+    pub locked_balance: Decimal,
+}
+
+impl AccountBalance {
+    #[allow(dead_code)]
     pub fn available(&self) -> Decimal {
         self.balance - self.locked_balance
     }
 }
 
 #[derive(Debug, Clone, FromRow)]
-#[allow(dead_code)] // fields populated from DB rows; read access varies by caller
+#[allow(dead_code)] // maps to transaction_events table
+pub struct TransactionEvent {
+    pub id: Uuid,
+    pub transaction_id: Uuid,
+    pub status: String,
+    pub tx_hash: Option<String>,
+    pub block_number: Option<i64>,
+    pub policy_check_result: Option<serde_json::Value>,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, FromRow)]
+#[allow(dead_code)] // maps to current_transactions view
 pub struct Transaction {
     pub id: Uuid,
     pub account_id: Uuid,

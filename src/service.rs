@@ -100,14 +100,13 @@ impl WithdrawalService {
         &self,
         key: &str,
     ) -> Result<Option<Transaction>, WithdrawalError> {
-        // Runtime query — no DATABASE_URL needed at compile time
         let row = sqlx::query(
             r#"
             SELECT id, account_id, type, amount, status,
                    destination_address, tx_hash, block_number,
                    idempotency_key, policy_check_result,
                    created_at, confirmed_at
-            FROM transactions
+            FROM current_transactions
             WHERE idempotency_key = $1
             "#,
         )
@@ -133,20 +132,20 @@ impl WithdrawalService {
         Ok(())
     }
 
-    /// Acquires a pessimistic row lock on the account, checks available balance,
-    /// increments locked_balance, inserts the transaction and outbox event —
-    /// all in a single DB transaction.
+    /// Acquires a pessimistic row lock on the account, derives the available
+    /// balance from the append-only ledger, inserts a lock entry, the
+    /// transaction, and an outbox event — all in a single DB transaction.
     async fn lock_funds_and_create_transaction(
         &self,
         req: &WithdrawalRequest,
     ) -> Result<(Uuid, Transaction), WithdrawalError> {
-        // begin() directly on the pool — no intermediate acquire() needed
         let mut db_tx = self.db.begin().await?;
 
-        // Pessimistic lock — serialises concurrent withdrawals for this account
-        let row = sqlx::query(
+        // Pessimistic lock on the identity row — serialises concurrent
+        // withdrawals. No balance stored here; it is derived below.
+        let acct_row = sqlx::query(
             r#"
-            SELECT id, balance, locked_balance
+            SELECT id
             FROM accounts
             WHERE user_id = $1 AND asset = $2
             FOR UPDATE
@@ -161,9 +160,23 @@ impl WithdrawalService {
             asset: req.asset.clone(),
         })?;
 
-        let account_id: Uuid       = row.get("id");
-        let balance: Decimal       = row.get("balance");
-        let locked_balance: Decimal = row.get("locked_balance");
+        let account_id: Uuid = acct_row.get("id");
+
+        // Derive balance from the append-only ledger
+        let bal_row = sqlx::query(
+            r#"
+            SELECT COALESCE(SUM(amount), 0)       AS balance,
+                   COALESCE(SUM(locked_delta), 0)  AS locked_balance
+            FROM ledger_entries
+            WHERE account_id = $1
+            "#,
+        )
+        .bind(account_id)
+        .fetch_one(&mut *db_tx)
+        .await?;
+
+        let balance: Decimal        = bal_row.get("balance");
+        let locked_balance: Decimal = bal_row.get("locked_balance");
 
         let available = balance - locked_balance;
         if available < req.amount {
@@ -173,48 +186,52 @@ impl WithdrawalService {
             });
         }
 
-        // Reserve the funds
+        // All inserts are append-only — no row is ever mutated.
+        let tx_id = Uuid::new_v4();
+
+        // 1. Immutable transaction record
         sqlx::query(
             r#"
-            UPDATE accounts
-            SET locked_balance = locked_balance + $1,
-                updated_at     = NOW()
-            WHERE id = $2
-            "#,
-        )
-        .bind(req.amount)
-        .bind(account_id)
-        .execute(&mut *db_tx)
-        .await?;
-
-        // Create transaction record
-        let tx_id = Uuid::new_v4();
-        let tx_row = sqlx::query(
-            r#"
-            INSERT INTO transactions (
-                id, account_id, type, amount, status,
-                destination_address, idempotency_key, created_at
-            )
-            VALUES ($1, $2, 'withdrawal', $3, $4, $5, $6, NOW())
-            RETURNING
-                id, account_id, type, amount, status,
-                destination_address, tx_hash, block_number,
-                idempotency_key, policy_check_result,
-                created_at, confirmed_at
+            INSERT INTO transactions
+                (id, account_id, type, amount, destination_address, idempotency_key)
+            VALUES ($1, $2, 'withdrawal', $3, $4, $5)
             "#,
         )
         .bind(tx_id)
         .bind(account_id)
         .bind(req.amount)
-        .bind(TransactionStatus::PendingPolicy.as_str())
         .bind(&req.destination_address)
         .bind(&req.idempotency_key)
-        .fetch_one(&mut *db_tx)
+        .execute(&mut *db_tx)
         .await?;
 
-        let tx = map_transaction_row(&tx_row);
+        // 2. Initial status event
+        sqlx::query(
+            r#"
+            INSERT INTO transaction_events (transaction_id, status)
+            VALUES ($1, $2)
+            "#,
+        )
+        .bind(tx_id)
+        .bind(TransactionStatus::PendingPolicy.as_str())
+        .execute(&mut *db_tx)
+        .await?;
 
-        // Write outbox event IN THE SAME TRANSACTION (transactional outbox pattern)
+        // 3. Lock funds via ledger entry
+        sqlx::query(
+            r#"
+            INSERT INTO ledger_entries
+                (account_id, entry_type, locked_delta, transaction_id)
+            VALUES ($1, 'withdrawal_lock', $2, $3)
+            "#,
+        )
+        .bind(account_id)
+        .bind(req.amount)
+        .bind(tx_id)
+        .execute(&mut *db_tx)
+        .await?;
+
+        // 4. Transactional outbox
         let payload = json!({
             "transaction_id": tx_id.to_string(),
             "asset":          req.asset,
@@ -224,8 +241,8 @@ impl WithdrawalService {
 
         sqlx::query(
             r#"
-            INSERT INTO outbox_events (id, aggregate_id, event_type, payload, created_at)
-            VALUES ($1, $2, 'withdrawal.pending_policy', $3, NOW())
+            INSERT INTO outbox_events (id, aggregate_id, event_type, payload)
+            VALUES ($1, $2, 'withdrawal.pending_policy', $3)
             "#,
         )
         .bind(Uuid::new_v4())
@@ -234,19 +251,37 @@ impl WithdrawalService {
         .execute(&mut *db_tx)
         .await?;
 
+        // 5. Read derived state from the view
+        let tx_row = sqlx::query(
+            r#"
+            SELECT id, account_id, type, amount, status,
+                   destination_address, tx_hash, block_number,
+                   idempotency_key, policy_check_result,
+                   created_at, confirmed_at
+            FROM current_transactions
+            WHERE id = $1
+            "#,
+        )
+        .bind(tx_id)
+        .fetch_one(&mut *db_tx)
+        .await?;
+
+        let tx = map_transaction_row(&tx_row);
+
         db_tx.commit().await?;
 
         info!(
             transaction_id = %tx_id,
             %account_id,
             amount = %req.amount,
-            "funds locked and transaction created"
+            "funds locked via ledger entry"
         );
 
         Ok((account_id, tx))
     }
 
-    /// Releases locked funds and marks the transaction rejected.
+    /// Releases locked funds via an append-only ledger entry and records
+    /// a rejection event.
     async fn refund_and_reject(
         &self,
         tx: &Transaction,
@@ -255,35 +290,35 @@ impl WithdrawalService {
     ) -> Result<(), WithdrawalError> {
         let mut db_tx = self.db.begin().await?;
 
-        // Release the lock — funds were never sent on-chain
+        // Append-only: unlock funds via a new ledger row
         sqlx::query(
             r#"
-            UPDATE accounts
-            SET locked_balance = locked_balance - $1,
-                updated_at     = NOW()
-            WHERE id = $2
+            INSERT INTO ledger_entries
+                (account_id, entry_type, locked_delta, transaction_id)
+            VALUES ($1, 'withdrawal_unlock', $2, $3)
             "#,
         )
-        .bind(amount)
         .bind(account_id)
+        .bind(-amount)
+        .bind(tx.id)
         .execute(&mut *db_tx)
         .await?;
 
+        // Append-only: record rejection as a new event (no UPDATE)
         sqlx::query(
             r#"
-            UPDATE transactions
-            SET status = $1
-            WHERE id = $2
+            INSERT INTO transaction_events (transaction_id, status)
+            VALUES ($1, $2)
             "#,
         )
-        .bind(TransactionStatus::Rejected.as_str())
         .bind(tx.id)
+        .bind(TransactionStatus::Rejected.as_str())
         .execute(&mut *db_tx)
         .await?;
 
         db_tx.commit().await?;
 
-        info!(transaction_id = %tx.id, "funds unlocked, transaction marked rejected");
+        info!(transaction_id = %tx.id, "funds unlocked via ledger entry, rejection event recorded");
         Ok(())
     }
 }
