@@ -1,5 +1,7 @@
 # Crypto Custody Withdrawal Service
 
+<img width="1498" height="696" alt="Screenshot 2026-03-17 at 11 17 29 AM" src="https://github.com/user-attachments/assets/28aecd29-6e7c-4651-9324-4458b5fea85e" />
+
 > ⚠️ **DEMO ONLY — NOT FOR PRODUCTION USE**
 > This codebase is a simplified demonstration of withdrawal system architecture concepts.
 > It is not hardened, audited, or suitable for handling real funds under any circumstances.
