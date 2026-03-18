@@ -31,7 +31,7 @@ BEGIN;
 WITH locked_account AS (
     SELECT id
     FROM accounts
-    WHERE asset = 'BTC'
+    WHERE asset = 'ETH'
     FOR UPDATE
 ),
 
@@ -101,18 +101,18 @@ BEGIN;
 -- Confirm the transaction — set tx_hash, block_number, confirmed_at
 UPDATE transactions
 SET
-    tx_hash = '0x321...cba',         -- hash returned from blockchain node
-    block_number = 12345678,             -- block it was mined in
+    tx_hash = '0x321...cba',                -- hash returned from blockchain node
+    block_number = 12345678,                -- block it was mined in
     status = 'confirmed',
-    confirmed_at = NOW()                 -- NULL → meaningful timestamp
+    confirmed_at = NOW()                    -- NULL → meaningful timestamp
 WHERE account_id = (SELECT id FROM accounts WHERE asset = 'ETH');
 
 -- Settle the ledger — debit balance and release locked_balance atomically
 -- These two updates ALWAYS happen together or not at all
 UPDATE accounts
 SET
-    balance = balance - 25,              -- now actually deduct from balance
-    locked_balance = locked_balance - 25, -- release the reserved funds
+    balance = balance - 25,                 -- now actually deduct from balance
+    locked_balance = locked_balance - 25,   -- release the reserved funds
     updated_at = NOW()
 WHERE asset = 'ETH';
 
