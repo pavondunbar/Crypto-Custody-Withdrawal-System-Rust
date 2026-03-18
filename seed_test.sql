@@ -31,7 +31,7 @@ BEGIN;
 WITH locked_account AS (
     SELECT id
     FROM accounts
-    WHERE asset = 'ETH'
+    WHERE asset = 'BTC'
     FOR UPDATE
 ),
 
@@ -52,7 +52,7 @@ inserted_transaction AS (
         'withdrawal',
         25.000000000000000000,
         'pending_policy',
-        'bc1qxy2kgdygjrsqtzq2n0yrf',
+        '0x123456abcdef...fedcba654321',
         gen_random_uuid()::VARCHAR,
         NOW()
     FROM locked_account
@@ -74,7 +74,7 @@ inserted_event AS (
         jsonb_build_object(
             'transaction_id', id::VARCHAR,
             'amount', amount::VARCHAR,
-            'destination', '0xabcdef...123456'
+            'destination', '0x123456abcdef...fedcba654321'
         ),
         NOW()
     FROM inserted_transaction
@@ -101,7 +101,7 @@ BEGIN;
 -- Confirm the transaction — set tx_hash, block_number, confirmed_at
 UPDATE transactions
 SET
-    tx_hash = '0x123456...abcdef',         -- hash returned from blockchain node
+    tx_hash = '0x321...cba',         -- hash returned from blockchain node
     block_number = 12345678,             -- block it was mined in
     status = 'confirmed',
     confirmed_at = NOW()                 -- NULL → meaningful timestamp
@@ -131,7 +131,7 @@ SELECT
     'withdrawal.confirmed',
     jsonb_build_object(
         'transaction_id', id::VARCHAR,
-        'tx_hash', '0x123456...abcdef',
+        'tx_hash', '0x321...cba',
         'block_number', '12345678',
         'amount', amount::VARCHAR
     ),
