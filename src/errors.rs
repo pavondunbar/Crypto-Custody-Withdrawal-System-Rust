@@ -24,5 +24,6 @@ pub enum WithdrawalError {
     Serialization(#[from] serde_json::Error),
 
     #[error("signing queue error: {0}")]
+    #[allow(dead_code)] // needed by real SigningQueue trait implementations
     SigningQueue(String),
 }

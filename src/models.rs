@@ -46,6 +46,7 @@ impl TransactionStatus {
 // -----------------------------------------------
 
 #[derive(Debug, Clone, FromRow)]
+#[allow(dead_code)] // maps to accounts table; used by typed queries
 pub struct Account {
     pub id: Uuid,
     pub user_id: Uuid,
@@ -57,13 +58,14 @@ pub struct Account {
 }
 
 impl Account {
-    /// Funds available to withdraw: balance minus what's already locked
+    #[allow(dead_code)] // available for typed query callers
     pub fn available(&self) -> Decimal {
         self.balance - self.locked_balance
     }
 }
 
 #[derive(Debug, Clone, FromRow)]
+#[allow(dead_code)] // fields populated from DB rows; read access varies by caller
 pub struct Transaction {
     pub id: Uuid,
     pub account_id: Uuid,
@@ -80,6 +82,7 @@ pub struct Transaction {
 }
 
 #[derive(Debug, Clone, FromRow)]
+#[allow(dead_code)] // maps to outbox_events table; used by typed queries
 pub struct OutboxEvent {
     pub id: Uuid,
     pub aggregate_id: String,

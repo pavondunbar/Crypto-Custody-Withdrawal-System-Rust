@@ -1,6 +1,6 @@
 use rust_decimal::Decimal;
 use serde_json::json;
-use sqlx::{Acquire, PgPool, Row};
+use sqlx::{PgPool, Row};
 use tracing::{info, instrument, warn};
 use uuid::Uuid;
 

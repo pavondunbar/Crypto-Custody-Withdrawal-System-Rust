@@ -77,7 +77,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         user_id:             uuid::Uuid::new_v4(),
         asset:               "ETH".into(),
         amount:              Decimal::new(25, 0),          // 25 ETH
-        destination_address: "bc1qxy2kgdygjrsqtzq2n0yrf".into(),
+        destination_address: "0x123456...abcdef".into(),
         idempotency_key:     uuid::Uuid::new_v4().to_string(),
     };
 
