@@ -74,7 +74,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Example invocation
     let req = models::WithdrawalRequest {
-        user_id:             uuid::Uuid::new_v4(),
+        user_id:             uuid::Uuid::parse_str("a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d").expect("valid hardcoded UUID"),
         asset:               "ETH".into(),
         amount:              Decimal::new(25, 0),          // 25 ETH
         destination_address: "0x123456...abcdef".into(),

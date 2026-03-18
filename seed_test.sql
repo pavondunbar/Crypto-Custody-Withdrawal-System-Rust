@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 INSERT INTO accounts (id, user_id, asset, balance, locked_balance, created_at, updated_at)
 VALUES (
     gen_random_uuid(),
-    gen_random_uuid(),
+    'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
     'ETH',
     100.000000000000000000,
     25.000000000000000000,
