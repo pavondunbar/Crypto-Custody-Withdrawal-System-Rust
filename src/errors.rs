@@ -26,4 +26,8 @@ pub enum WithdrawalError {
     #[error("signing queue error: {0}")]
     #[allow(dead_code)] // needed by real SigningQueue trait implementations
     SigningQueue(String),
+
+    #[error("outbox publish error: {0}")]
+    #[allow(dead_code)] // needed by real EventPublisher trait implementations
+    OutboxPublish(String),
 }

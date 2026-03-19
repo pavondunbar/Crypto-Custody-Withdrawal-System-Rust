@@ -113,7 +113,7 @@ pub struct Transaction {
 }
 
 #[derive(Debug, Clone, FromRow)]
-#[allow(dead_code)] // maps to outbox_events table; used by typed queries
+#[allow(dead_code)] // payload/created_at/published_at read by real publishers
 pub struct OutboxEvent {
     pub id: Uuid,
     pub aggregate_id: String,

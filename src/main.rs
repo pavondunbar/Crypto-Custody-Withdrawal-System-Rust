@@ -1,5 +1,6 @@
 mod errors;
 mod models;
+mod outbox;
 mod ports;
 mod service;
 
@@ -7,7 +8,10 @@ use async_trait::async_trait;
 use rust_decimal::Decimal;
 
 use errors::WithdrawalError;
-use models::{PolicyDecision, PolicyVerdict, SigningMessage, Transaction};
+use models::{
+    OutboxEvent, PolicyDecision, PolicyVerdict, SigningMessage, Transaction,
+};
+use outbox::EventPublisher;
 use ports::{PolicyEngine, SigningQueue};
 use service::WithdrawalService;
 
@@ -53,6 +57,26 @@ impl SigningQueue for StubSigningQueue {
     }
 }
 
+/// Stub event publisher: logs and discards.
+/// Real implementation would publish to Kafka, SNS, etc.
+struct StubEventPublisher;
+
+#[async_trait]
+impl EventPublisher for StubEventPublisher {
+    async fn publish(
+        &self,
+        event: &OutboxEvent,
+    ) -> Result<(), WithdrawalError> {
+        tracing::info!(
+            event_id     = %event.id,
+            event_type   = %event.event_type,
+            aggregate_id = %event.aggregate_id,
+            "event publisher: delivered (stub)"
+        );
+        Ok(())
+    }
+}
+
 // -----------------------------------------------------------------------
 // Wiring
 // -----------------------------------------------------------------------
@@ -65,6 +89,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap_or_else(|_| "postgres://postgres:password@localhost/custody".into());
 
     let pool = sqlx::PgPool::connect(&database_url).await?;
+
+    // Spawn outbox processor — polls unpublished events and delivers
+    // them to the event publisher (stub here, Kafka/SNS in production).
+    let outbox_pool = pool.clone();
+    let outbox_handle = tokio::spawn(async move {
+        let processor = outbox::OutboxProcessor::new(
+            outbox_pool,
+            Box::new(StubEventPublisher),
+            10,
+            std::time::Duration::from_secs(1),
+        );
+        processor.run().await;
+    });
 
     let service = WithdrawalService::new(
         pool,
@@ -85,6 +122,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(tx)   => tracing::info!(transaction_id = %tx.id, status = %tx.status, "withdrawal initiated"),
         Err(err) => tracing::error!(error = %err, "withdrawal failed"),
     }
+
+    // Give the outbox processor time to pick up the new event
+    tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+    outbox_handle.abort();
 
     Ok(())
 }
