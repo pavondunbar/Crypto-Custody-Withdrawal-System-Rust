@@ -1,14 +1,333 @@
-   0.097020500s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint: stale: changed "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/models.rs"
-   0.097034708s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:           (vs) "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/withdrawal-8517d04e2489d666/dep-bin-withdrawal"
-   0.097037250s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1773945304, nanos: 947514476 } < FileTime { seconds: 1773945343, nanos: 521151904 }
-   0.097897708s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint: fingerprint dirty for withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST)/Check { test: false }/TargetInner { name: "withdrawal", doc: true, ..: with_path("/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/main.rs", Edition2021) }
-   0.097907208s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/withdrawal-8517d04e2489d666/dep-bin-withdrawal", reference_mtime: FileTime { seconds: 1773945304, nanos: 947514476 }, stale: "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/models.rs", stale_mtime: FileTime { seconds: 1773945343, nanos: 521151904 } }))
-   0.131942917s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint: stale: changed "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/models.rs"
-   0.131959208s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:           (vs) "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/withdrawal-92ff984c6559be79/dep-test-bin-withdrawal"
-   0.131960792s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1773945304, nanos: 947520601 } < FileTime { seconds: 1773945343, nanos: 521151904 }
-   0.132826750s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint: fingerprint dirty for withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST)/Check { test: true }/TargetInner { name: "withdrawal", doc: true, ..: with_path("/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/main.rs", Edition2021) }
-   0.132838250s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/withdrawal-92ff984c6559be79/dep-test-bin-withdrawal", reference_mtime: FileTime { seconds: 1773945304, nanos: 947520601 }, stale: "/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/models.rs", stale_mtime: FileTime { seconds: 1773945343, nanos: 521151904 } }))
+   0.089632792s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint: fingerprint error for withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST)/Check { test: false }/TargetInner { name: "withdrawal", doc: true, ..: with_path("/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/main.rs", Edition2021) }
+   0.089652167s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/withdrawal-03311a82b8e1daa6/bin-withdrawal`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.106657417s  INFO prepare_target{force=false package_id=sqlx v0.7.4 target="sqlx"}: cargo::core::compiler::fingerprint: fingerprint error for sqlx v0.7.4/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sqlx", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sqlx-0.7.4/src/lib.rs", Edition2021) }
+   0.106677792s  INFO prepare_target{force=false package_id=sqlx v0.7.4 target="sqlx"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/sqlx-369a2fc0b9bf218c/lib-sqlx`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.107096917s  INFO prepare_target{force=false package_id=sqlx-core v0.7.4 target="sqlx_core"}: cargo::core::compiler::fingerprint: fingerprint error for sqlx-core v0.7.4/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sqlx_core", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sqlx-core-0.7.4/src/lib.rs", Edition2021) }
+   0.107100917s  INFO prepare_target{force=false package_id=sqlx-core v0.7.4 target="sqlx_core"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/sqlx-core-ad3c34b3e3ed3640/lib-sqlx_core`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.107844792s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="ahash"}: cargo::core::compiler::fingerprint: fingerprint error for ahash v0.8.12/Check { test: false }/TargetInner { ..: lib_target("ahash", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ahash-0.8.12/src/lib.rs", Edition2018) }
+   0.107848542s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="ahash"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/ahash-7b4313ada66ac85d/lib-ahash`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.108838000s  INFO prepare_target{force=false package_id=zerocopy v0.8.47 target="zerocopy"}: cargo::core::compiler::fingerprint: fingerprint error for zerocopy v0.8.47/Check { test: false }/TargetInner { ..: lib_target("zerocopy", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerocopy-0.8.47/src/lib.rs", Edition2021) }
+   0.108841209s  INFO prepare_target{force=false package_id=zerocopy v0.8.47 target="zerocopy"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/zerocopy-60ea4c4f094c7765/lib-zerocopy`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   0.111565250s  INFO prepare_target{force=false package_id=hashlink v0.8.4 target="hashlink"}: cargo::core::compiler::fingerprint: fingerprint error for hashlink v0.8.4/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("hashlink", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hashlink-0.8.4/src/lib.rs", Edition2018) }
+   0.111568334s  INFO prepare_target{force=false package_id=hashlink v0.8.4 target="hashlink"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/hashlink-1fa54fbabfa71d64/lib-hashlink`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.111718042s  INFO prepare_target{force=false package_id=hashbrown v0.14.5 target="hashbrown"}: cargo::core::compiler::fingerprint: fingerprint error for hashbrown v0.14.5/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("hashbrown", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hashbrown-0.14.5/src/lib.rs", Edition2021) }
+   0.111720959s  INFO prepare_target{force=false package_id=hashbrown v0.14.5 target="hashbrown"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/hashbrown-6972823ca9cbb87e/lib-hashbrown`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   0.123323625s  INFO prepare_target{force=false package_id=sqlx-postgres v0.7.4 target="sqlx_postgres"}: cargo::core::compiler::fingerprint: fingerprint error for sqlx-postgres v0.7.4/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sqlx_postgres", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sqlx-postgres-0.7.4/src/lib.rs", Edition2021) }
+   0.123332084s  INFO prepare_target{force=false package_id=sqlx-postgres v0.7.4 target="sqlx_postgres"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/sqlx-postgres-e44e312744a7ccff/lib-sqlx_postgres`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.125207542s  INFO prepare_target{force=false package_id=rand v0.8.5 target="rand"}: cargo::core::compiler::fingerprint: fingerprint error for rand v0.8.5/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("rand", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rand-0.8.5/src/lib.rs", Edition2018) }
+   0.125213667s  INFO prepare_target{force=false package_id=rand v0.8.5 target="rand"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/rand-544b30433862e1c6/lib-rand`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.125415542s  INFO prepare_target{force=false package_id=rand_chacha v0.3.1 target="rand_chacha"}: cargo::core::compiler::fingerprint: fingerprint error for rand_chacha v0.3.1/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("rand_chacha", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rand_chacha-0.3.1/src/lib.rs", Edition2018) }
+   0.125420084s  INFO prepare_target{force=false package_id=rand_chacha v0.3.1 target="rand_chacha"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/rand_chacha-48c1508aacca7338/lib-rand_chacha`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   0.125596625s  INFO prepare_target{force=false package_id=ppv-lite86 v0.2.21 target="ppv_lite86"}: cargo::core::compiler::fingerprint: fingerprint error for ppv-lite86 v0.2.21/Check { test: false }/TargetInner { ..: lib_target("ppv_lite86", ["lib"], "/Users/pavondunbar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ppv-lite86-0.2.21/src/lib.rs", Edition2021) }
+   0.125600834s  INFO prepare_target{force=false package_id=ppv-lite86 v0.2.21 target="ppv_lite86"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/ppv-lite86-ee9c39b8fa3b126e/lib-ppv_lite86`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   0.127445500s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint: fingerprint error for withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST)/Check { test: true }/TargetInner { name: "withdrawal", doc: true, ..: with_path("/Users/pavondunbar/CRYPTO-CUSTODY-RUST/src/main.rs", Edition2021) }
+   0.127449542s  INFO prepare_target{force=false package_id=withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST) target="withdrawal"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/pavondunbar/CRYPTO-CUSTODY-RUST/target/debug/.fingerprint/withdrawal-ccbc328643c81d27/test-bin-withdrawal`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+    Checking zerocopy v0.8.47
+    Checking ahash v0.8.12
+    Checking ppv-lite86 v0.2.21
+    Checking hashbrown v0.14.5
+    Checking rand_chacha v0.3.1
+    Checking rand v0.8.5
+    Checking hashlink v0.8.4
+    Checking sqlx-core v0.7.4
+    Checking sqlx-postgres v0.7.4
+    Checking sqlx v0.7.4
     Checking withdrawal v0.1.0 (/Users/pavondunbar/CRYPTO-CUSTODY-RUST)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.42s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.45s
 warning: the following packages contain code that will be rejected by a future version of Rust: sqlx-postgres v0.7.4
 note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 2`
