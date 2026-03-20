@@ -195,4 +195,10 @@ This demo omits a significant number of concerns that a real custody system woul
 
 ---
 
-*Built by [Pavon Dunbar](https://linktr.ee/pavondunbar)*
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+*Built with ♥️ by [Pavon Dunbar](https://linktr.ee/pavondunbar)*
