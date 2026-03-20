@@ -4,7 +4,11 @@ mod outbox;
 mod ports;
 mod service;
 
+use std::time::Duration;
+
 use async_trait::async_trait;
+use rdkafka::producer::{FutureProducer, FutureRecord};
+use rdkafka::ClientConfig;
 use rust_decimal::Decimal;
 
 use errors::WithdrawalError;
@@ -57,21 +61,45 @@ impl SigningQueue for StubSigningQueue {
     }
 }
 
-/// Stub event publisher: logs and discards.
-/// Real implementation would publish to Kafka, SNS, etc.
-struct StubEventPublisher;
+/// Publishes outbox events to Kafka topics.
+/// Uses `event_type` as the topic name and `aggregate_id`
+/// as the partition key to preserve per-transaction ordering.
+struct KafkaEventPublisher {
+    producer: FutureProducer,
+}
+
+impl KafkaEventPublisher {
+    fn new(producer: FutureProducer) -> Self {
+        Self { producer }
+    }
+}
 
 #[async_trait]
-impl EventPublisher for StubEventPublisher {
+impl EventPublisher for KafkaEventPublisher {
     async fn publish(
         &self,
         event: &OutboxEvent,
     ) -> Result<(), WithdrawalError> {
+        let payload = event.payload.to_string();
+        let record = FutureRecord::to(&event.event_type)
+            .key(&event.aggregate_id)
+            .payload(&payload);
+
+        self.producer
+            .send(record, Duration::from_secs(5))
+            .await
+            .map_err(|(err, _)| {
+                WithdrawalError::OutboxPublish(format!(
+                    "kafka produce failed for event {}: {err}",
+                    event.id,
+                ))
+            })?;
+
         tracing::info!(
             event_id     = %event.id,
             event_type   = %event.event_type,
             aggregate_id = %event.aggregate_id,
-            "event publisher: delivered (stub)"
+            "event published to kafka"
         );
         Ok(())
     }
@@ -86,19 +114,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
 
     let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://postgres:password@localhost/custody".into());
+        .unwrap_or_else(|_| "postgres://postgres:password@localhost/custodyrust".into());
+    let kafka_broker = std::env::var("KAFKA_BROKER_URL")
+        .unwrap_or_else(|_| "localhost:9092".into());
 
     let pool = sqlx::PgPool::connect(&database_url).await?;
 
+    let kafka_producer: FutureProducer = ClientConfig::new()
+        .set("bootstrap.servers", &kafka_broker)
+        .set("message.timeout.ms", "5000")
+        .create()
+        .expect("failed to create kafka producer");
+
     // Spawn outbox processor — polls unpublished events and delivers
-    // them to the event publisher (stub here, Kafka/SNS in production).
+    // them to Kafka topics keyed by event_type.
     let outbox_pool = pool.clone();
     let outbox_handle = tokio::spawn(async move {
         let processor = outbox::OutboxProcessor::new(
             outbox_pool,
-            Box::new(StubEventPublisher),
+            Box::new(KafkaEventPublisher::new(kafka_producer)),
             10,
-            std::time::Duration::from_secs(1),
+            Duration::from_secs(1),
         );
         processor.run().await;
     });
@@ -124,7 +160,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Give the outbox processor time to pick up the new event
-    tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+    tokio::time::sleep(Duration::from_secs(2)).await;
     outbox_handle.abort();
 
     Ok(())
